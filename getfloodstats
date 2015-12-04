@@ -1,0 +1,18 @@
+#!/bin/sh
+#
+# Defines variable. Every means how often the stats are printed.
+DURATION="10mins"
+EVERY="10"			# seconds
+#
+# Remove all old result files.
+rm -f result.flood*
+#
+# Go through each protocol and run the command.
+for f in 3 4
+do
+    # without windoes, quite, in hare mode, duration of 10mins print stats every 10secs
+    cnet -W -q -T -e $DURATION -s -f ${EVERY}secs FLOODING$f	| \
+    grep 'Efficiency'						| \
+    cut -d: -f 2						| \
+    awk "{ printf(\"%d %s\n\", ++i * $EVERY, \$1); }"		> result.flood$f
+done
